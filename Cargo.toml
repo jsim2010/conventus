@@ -1,0 +1,11 @@
+[package]
+name = "conventus"
+version = "0.1.0"
+authors = ["Justin Simerly <justin.simerly@endress.com>"]
+edition = "2018"
+description = "Traits for assembling and disassembling items"
+license = "MIT"
+repository 
+
+[dependencies]
+fehler = "1.0.0"
