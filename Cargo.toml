@@ -5,7 +5,10 @@ authors = ["Justin Simerly <justin.simerly@endress.com>"]
 edition = "2018"
 description = "Traits for assembling and disassembling items"
 license = "MIT"
-repository 
+repository = "https://github.com/jsim2010/conventus.git"
+readme = "README.md"
+keywords = ["assemble", "disassemble"]
+categories = ["rust-patterns"]
 
 [dependencies]
 fehler = "1.0.0"
