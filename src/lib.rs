@@ -1,8 +1,5 @@
 //! Traits for assembling and disassembling items.
-use {
-    fehler::throws,
-    std::error::Error,
-};
+use {fehler::throws, std::error::Error};
 
 /// A failure to assemble a composite from a sequence of components.
 #[derive(Debug)]
@@ -11,6 +8,13 @@ pub enum AssembleFailure<E> {
     Incomplete,
     /// There was an error with the components.
     Error(E),
+}
+
+impl<E> From<E> for AssembleFailure<E> {
+    #[inline]
+    fn from(value: E) -> Self {
+        Self::Error(value)
+    }
 }
 
 /// Converts a sequence of components of type `N` into `Self`.
