@@ -1,8 +1,8 @@
 //! Traits for assembling and disassembling items.
-use {fehler::throws, std::error::Error};
+use fehler::throws;
 
 /// A failure to assemble a composite from a sequence of components.
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum AssembleFailure<E> {
     /// There were not enough components.
     Incomplete,
@@ -23,7 +23,7 @@ where
     Self: Sized,
 {
     /// The type of the error that could be thrown during assembly.
-    type Error: Error;
+    type Error;
 
     /// Converts `components` into a `Self`.
     #[throws(AssembleFailure<Self::Error>)]
@@ -36,7 +36,7 @@ where
     Self: Sized,
 {
     /// The type of the error that could be thrown during assembly.
-    type Error: Error;
+    type Error;
 
     /// Converts `components` into a `S`.
     #[throws(AssembleFailure<Self::Error>)]
@@ -62,7 +62,7 @@ where
     Self: Sized,
 {
     /// The type of the error that could be thrown during disassembly.
-    type Error: Error;
+    type Error;
 
     /// Converts `composite` into a `Vec<Self>`.
     #[throws(Self::Error)]
@@ -72,7 +72,7 @@ where
 /// Converts `Self` into a `Vec<N>`.
 pub trait DisassembleInto<N> {
     /// The type of the error that could be thrown during disassembly.
-    type Error: Error;
+    type Error;
 
     /// Converts `self` into a `Vec<N>`.
     #[throws(Self::Error)]
