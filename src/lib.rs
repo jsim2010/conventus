@@ -1,93 +1,120 @@
 //! Traits for assembling and disassembling items.
 use fehler::throws;
 
-/// A failure to assemble a composite from a sequence of components.
+/// Describes a failure to assemble a composite from a sequence of parts.
 #[derive(Debug, PartialEq)]
 pub enum AssembleFailure<E> {
-    /// There were not enough components.
+    /// There were not enough parts.
     Incomplete,
-    /// There was an error with the components.
+    /// There was an error with the parts.
     Error(E),
 }
 
+/// Converts an `E` into an `AssembleFailure`.
 impl<E> From<E> for AssembleFailure<E> {
     #[inline]
-    fn from(value: E) -> Self {
-        Self::Error(value)
+    fn from(error: E) -> Self {
+        Self::Error(error)
     }
 }
 
-/// Converts a sequence of components of type `N` into `Self`.
-pub trait AssembleFrom<N>
+/// Specifies the assembly of `Self` from a sequence of `P`s.
+pub trait AssembleFrom<P>
 where
     Self: Sized,
 {
-    /// The type of the error that could be thrown during assembly.
+    /// Describes an error with the parts.
+    ///
+    /// This SHOULD describe all cases that prevent a successful assembly other than the case where more parts are needed.
     type Error;
 
-    /// Converts `components` into a `Self`.
+    /// Assembles `parts` into a `Self`.
+    ///
+    /// If assembly is successful, the implementation SHOULD remove all items used in the assembly from `parts`.
+    ///
+    /// # Errors
+    ///
+    /// If assembly fails, the implementation SHOULD throw the cause of the failure and not modify `parts`.
     #[throws(AssembleFailure<Self::Error>)]
-    fn assemble_from(components: &mut Vec<N>) -> Self;
+    fn assemble_from(parts: &mut Vec<P>) -> Self;
 }
 
-/// Converts a sequence of `Self`s into a composite of type `S`.
-pub trait AssembleInto<S>
+/// Specifies the assembly of `C` from a sequence of `Self`s.
+pub trait AssembleInto<C>
 where
     Self: Sized,
 {
-    /// The type of the error that could be thrown during assembly.
+    /// Describes an error with the parts.
+    ///
+    /// This SHOULD describe all cases that prevent a successful assembly other than the case where more parts are needed.
     type Error;
 
-    /// Converts `components` into a `S`.
+    /// Assembles `parts` into a `C`.
+    ///
+    /// If assembly is successful, the implementation SHOULD remove all items used in the assembly from `parts`.
+    ///
+    /// # Errors
+    /// 
+    /// If assembly fails, the implementation SHOULD throw the cause of the failure and not modify `parts`.
     #[throws(AssembleFailure<Self::Error>)]
-    fn assemble_into(components: &mut Vec<Self>) -> S;
+    fn assemble_into(parts: &mut Vec<Self>) -> C;
 }
 
-impl<N, S> AssembleInto<S> for N
+/// For every `C` that implements `AssembleFrom<P>`, `P` SHALL implement `AssembleInto<S>`.
+impl<P, C> AssembleInto<C> for P
 where
-    S: AssembleFrom<N>,
+    C: AssembleFrom<P>,
 {
-    type Error = <S as AssembleFrom<Self>>::Error;
+    type Error = <C as AssembleFrom<Self>>::Error;
 
     #[inline]
     #[throws(AssembleFailure<Self::Error>)]
-    fn assemble_into(components: &mut Vec<Self>) -> S {
-        S::assemble_from(components)?
+    fn assemble_into(parts: &mut Vec<Self>) -> C {
+        C::assemble_from(parts)?
     }
 }
 
-/// Converts a composite of type `S` into a `Vec<Self>`.
-pub trait DisassembleFrom<S>
+/// Disassembles a `C` into a sequence of `Self`s.
+pub trait DisassembleFrom<C>
 where
     Self: Sized,
 {
-    /// The type of the error that could be thrown during disassembly.
+    /// Describes an error that prevents disassembly.
     type Error;
 
-    /// Converts `composite` into a `Vec<Self>`.
+    /// Disassembles `composite` into a sequence of `Self`s.
+    ///
+    /// # Errors
+    ///
+    /// If disassembly fails, the implementation SHOULD throw the cause of the failure.
     #[throws(Self::Error)]
-    fn disassemble_from(composite: S) -> Vec<Self>;
+    fn disassemble_from(composite: C) -> Vec<Self>;
 }
 
-/// Converts `Self` into a `Vec<N>`.
-pub trait DisassembleInto<N> {
-    /// The type of the error that could be thrown during disassembly.
+/// Disassembles `Self` into a sequence of `P`s.
+pub trait DisassembleInto<P> {
+    /// Describes an error that prevents disassembly.
     type Error;
 
-    /// Converts `self` into a `Vec<N>`.
+    /// Disassembles `self` into a sequence of parts.
+    ///
+    /// # Errors
+    ///
+    /// If disassembly fails, the implementation SHOULD throw the cause of the failure.
     #[throws(Self::Error)]
-    fn disassemble_into(self) -> Vec<N>;
+    fn disassemble_into(self) -> Vec<P>;
 }
 
-impl<N, S> DisassembleInto<N> for S
+/// For every `P` that implements `DisassembleFrom<C>`, `C` SHALL implement `DisassembleInto<P>`.
+impl<P, C> DisassembleInto<P> for C
 where
-    N: DisassembleFrom<S>,
+    P: DisassembleFrom<C>,
 {
-    type Error = <N as DisassembleFrom<Self>>::Error;
+    type Error = <P as DisassembleFrom<Self>>::Error;
 
     #[inline]
     #[throws(Self::Error)]
-    fn disassemble_into(self) -> Vec<N> {
-        N::disassemble_from(self)?
+    fn disassemble_into(self) -> Vec<P> {
+        P::disassemble_from(self)?
     }
 }

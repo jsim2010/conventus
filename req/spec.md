@@ -2,10 +2,13 @@
 
 ## AssembleFrom
 
-There SHALL be a defined interface for a type to take a sequence of items, modify it as needed, and attempt to convert a partition of the sequence into an instance of the type.
+The project SHALL define an `AssembleFrom` interface that defines:
+
+- `Error`: A type describing all possible errors that may occur during assembly that indicate the component sequence has an error. The case where the sequence does not have enough components is not considered an error.
+- `assemble_from`: An associated function which takes a sequence of components and returns the assembled `Self`; it is able to throw `Error`
 
 success
-: The interface SHALL provide the ability to indicate a successful assembly by returning the created item.
+: `assemble_from` SHALL provide the ability to indicate a successful assembly by returning the created item.
 
 incomplete
 : The interface SHALL provide the ability to throw an error that indicates the sequence is incomplete.
