@@ -1,6 +1,6 @@
 [package]
 name = "conventus"
-version = "0.2.0"
+version = "0.3.0"
 authors = ["Justin Simerly <justin.simerly@endress.com>"]
 edition = "2018"
 description = "Traits for assembling and disassembling items"

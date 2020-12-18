@@ -25,16 +25,16 @@ where
 {
     /// Describes an error with the parts.
     ///
-    /// This SHOULD describe all cases that prevent a successful assembly other than the case where more parts are needed.
+    /// This SHALL describe all cases that prevent a successful assembly other than the case where more parts are needed.
     type Error;
 
     /// Assembles `parts` into a `Self`.
     ///
-    /// If assembly is successful, the implementation SHOULD remove all items used in the assembly from `parts`.
+    /// If assembly is successful, all items used in the assembly SHALL be removed from `parts`.
     ///
     /// # Errors
     ///
-    /// If assembly fails, the implementation SHOULD throw the cause of the failure and not modify `parts`.
+    /// If assembly fails, the cause of the failure SHALL be thrown and `parts` SHALL NOT be modified.
     #[throws(AssembleFailure<Self::Error>)]
     fn assemble_from(parts: &mut Vec<P>) -> Self;
 }
@@ -46,16 +46,16 @@ where
 {
     /// Describes an error with the parts.
     ///
-    /// This SHOULD describe all cases that prevent a successful assembly other than the case where more parts are needed.
+    /// This SHALL describe all cases that prevent a successful assembly other than the case where more parts are needed.
     type Error;
 
     /// Assembles `parts` into a `C`.
     ///
-    /// If assembly is successful, the implementation SHOULD remove all items used in the assembly from `parts`.
+    /// If assembly is successful, all items used in the assembly SHALL be removed from `parts`.
     ///
     /// # Errors
-    /// 
-    /// If assembly fails, the implementation SHOULD throw the cause of the failure and not modify `parts`.
+    ///
+    /// If assembly fails, the cause of the failure SHALL be thrown and `parts` SHALL NOT be modified.
     #[throws(AssembleFailure<Self::Error>)]
     fn assemble_into(parts: &mut Vec<Self>) -> C;
 }
@@ -86,7 +86,7 @@ where
     ///
     /// # Errors
     ///
-    /// If disassembly fails, the implementation SHOULD throw the cause of the failure.
+    /// If disassembly fails, the cause of the failure SHALL be thrown.
     #[throws(Self::Error)]
     fn disassemble_from(composite: C) -> Vec<Self>;
 }
@@ -100,7 +100,7 @@ pub trait DisassembleInto<P> {
     ///
     /// # Errors
     ///
-    /// If disassembly fails, the implementation SHOULD throw the cause of the failure.
+    /// If disassembly fails, the cause of the failure SHALL be thrown.
     #[throws(Self::Error)]
     fn disassemble_into(self) -> Vec<P>;
 }

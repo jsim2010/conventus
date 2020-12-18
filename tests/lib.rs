@@ -1,5 +1,5 @@
 use {
-    conventus::{DisassembleInto, AssembleFailure, AssembleInto, AssembleFrom, DisassembleFrom},
+    conventus::{AssembleFailure, AssembleFrom, AssembleInto, DisassembleFrom, DisassembleInto},
     fehler::{throw, throws},
 };
 
@@ -41,12 +41,21 @@ impl DisassembleFrom<Composite> for Part {
 fn assemble_into() {
     let mut parts = vec![Part(1), Part(2)];
 
-    assert_eq!(Composite::assemble_from(&mut parts.clone()), Part::assemble_into(&mut parts));
+    assert_eq!(
+        Composite::assemble_from(&mut parts.clone()),
+        Part::assemble_into(&mut parts)
+    );
 }
 
 #[test]
 fn disassemble_into() {
-    let composite = Composite {first: Part(1), second: Part(2)};
+    let composite = Composite {
+        first: Part(1),
+        second: Part(2),
+    };
 
-    assert_eq!(Part::disassemble_from(composite.clone()), composite.disassemble_into());
+    assert_eq!(
+        Part::disassemble_from(composite.clone()),
+        composite.disassemble_into()
+    );
 }
